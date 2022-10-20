@@ -1,0 +1,161 @@
+﻿@page "/tickets"
+@using BlazorApp_firstProgram.Data
+@inject BlazorApp_firstProgram.IService.IServiceObj<Ticket> ticketService
+@inject ModelAccount.Password currentPassword
+<body>
+    <h3>All Tickets:</h3>
+
+    @if (currentPassword.PasswordInputed != "12345")
+    {
+        <h4>Wellcome to see all info of tickets in <b>CINEMA HOUSE</b></h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>  </th>
+                    <th>Movie</th>
+                    <th>Genre</th>
+                    <th>Rating</th>
+                    <th>Price</th>
+                    <th>Kind of movie</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in usersArr)
+                {
+
+                    <tr>
+                        <td>-</td>
+                        <td>@ticket.NameMovie</td>
+                        <td>@ticket.Genre</td>
+                        <td>@ticket.Rating</td>
+                        <td>@ticket.Price</td>
+                        <td>@ticket.KindM</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h4>Hello admin, change some info in data base if smth is wrong/or just look thought the info of tickets</h4>
+        <table class="table">
+            <thead>
+                <tr>
+
+                    <th>  </th>
+                    <th>Id</th>
+                    <th>Movie</th>
+                    <th>Genre</th>
+                    <th>Rating</th>
+                    <th>Price</th>
+                    <th>Kind of movie</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in usersArr)
+                {
+                    <tr>
+                        <td>-</td>
+                        <td>@ticket.Id</td>
+                        <td>@ticket.NameMovie</td>
+                        <td>@ticket.Genre</td>
+                        <td>@ticket.Rating</td>
+                        <td>@ticket.Price</td>
+                        <td>@ticket.KindM</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="@(e=>Edit(@ticket.Id))">Edit</button>
+                            <button class="btn btn-danger" @onclick="@(e=>Delete(@ticket.Id))" style="float:right">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-nd-4">
+                <h3>This block is only for editing and adding new info:</h3>
+                <label>Movie:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="ticket.NameMovie" style="width:40%;" placeholder="Movie" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Genre:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="ticket.Genre" style="width:40%;" placeholder="Genre" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Kind of movie:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="ticket.KindM" style="width:40%;" placeholder="Kind" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Rating of the movie:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="ticket.Rating" type="number" style="width:40%;" placeholder="Rating" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Price:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="ticket.Price" type="number" style="width:40%;" placeholder="Price" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-nd-4"></div>
+            <div class="col-nd-8">
+                <button class="btn btn-primary" @onclick="@(e=>Save())">Save</button>
+                <button class="btn btn-danger" @onclick="@(e=>Reset())" style="float:right">Reset</button>
+            </div>
+        </div>
+    }
+
+</body>
+
+
+@code {
+   
+    Ticket ticket = new Ticket();
+    List<Ticket> usersArr = new List<Ticket>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetUsers();
+    }
+    private void GetUsers()
+    {
+        usersArr = ticketService.GetUsers();
+    }
+    private void Save()
+    {
+        ticketService.SaveOrUpdate(ticket);
+        Reset();
+        GetUsers();
+    }
+    private void Reset()
+    {
+        ticket = new Ticket();
+    }
+    private void Edit(string userId)
+    {
+        ticket = ticketService.GetUser(userId);
+    }
+
+    private void Delete(string userId)
+    {
+        ticketService.Delete(userId);
+        GetUsers();
+    }
+}

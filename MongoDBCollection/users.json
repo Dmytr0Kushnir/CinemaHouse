@@ -1,0 +1,22 @@
+[{
+  "_id": "615c3d351c0dac6c942617b7",
+  "firstname": "Maria",
+  "lastname": "Hartovanets",
+  "age": 19,
+  "Email": "mariahrtv@gmail.com",
+  "Password": "1234"
+},{
+  "_id": "615c3d501c0dac6c942617b8",
+  "firstname": "Nadia",
+  "lastname": "Svechkorenko",
+  "age": 40,
+  "Email": "nadiasvech@gmail.com",
+  "Password": "1234"
+},{
+  "_id": "615c3d761c0dac6c942617ba",
+  "firstname": "Sofia",
+  "lastname": "Paslavska",
+  "age": 14,
+  "Email": "sofiapas@gmail.com",
+  "Password": "1111"
+}]

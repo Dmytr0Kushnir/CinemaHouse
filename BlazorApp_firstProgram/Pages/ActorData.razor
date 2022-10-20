@@ -1,0 +1,169 @@
+﻿@page "/actorsDB"
+
+
+@using BlazorApp_firstProgram.Data
+@inject BlazorApp_firstProgram.IService.IServiceObj<Actor> actorService
+@inject ModelAccount.Password currentPassword
+
+<body>
+    <h3>The best actor for Cinema House ever</h3>
+
+
+    @if (currentPassword.PasswordInputed != "12345")
+    {
+        <h4>Dear sir/madam, there u can see info of the best actors</h4>
+        <table class="table">
+            <thead>
+                <tr>
+
+                    <th>  </th>
+
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Rating</th>
+                    <th>Hometown</th>
+                    <th>Movies count</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var person in usersArr)
+                {
+
+                    <tr>
+                        <td>-</td>
+                        <td>@person.FirstName</td>
+                        <td>@person.LastName</td>
+                        <td>@person.Rating</td>
+                        <td>@person.HomeTown</td>
+                        <td>@person.CountOfMovie</td>
+
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    }
+    else
+    {
+        <h4>Dear admin, there u can change all info of actors</h4>
+        <table class="table">
+            <thead>
+                <tr>
+
+                    <th> № </th>
+                    <th>Id</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Rating</th>
+                    <th>Hometown</th>
+                    <th>Movies count</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var person in usersArr)
+                {
+
+                    <tr>
+                        <td>-</td>
+                        <td>@person.Id</td>
+                        <td>@person.FirstName</td>
+                        <td>@person.LastName</td>
+                        <td>@person.Rating</td>
+                        <td>@person.HomeTown</td>
+                        <td>@person.CountOfMovie</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="@(e=>Edit(@person.Id))">Edit</button>
+                            <button class="btn btn-danger" @onclick="@(e=>Delete(@person.Id))" style="float:right">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-nd-4">
+                <h3>This block is only for editing and adding new info:</h3>
+                <label>Firstname:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.FirstName" style="width:40%;" placeholder="Firstname" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Lastname:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.LastName" style="width:40%;" placeholder="Lastname" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Where is she/he from?:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.HomeTown" style="width:40%;" placeholder="HomeTown" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Her/his rating:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.Rating" type="number" style="width:40%;" placeholder="Rating" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>In how many movies he/she filmed?:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.CountOfMovie" type="number" style="width:40%;" placeholder="Movies" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-nd-4"></div>
+            <div class="col-nd-8">
+                <button class="btn btn-primary" @onclick="@(e=>Save())">Save</button>
+                <button class="btn btn-danger" @onclick="@(e=>Reset())" style="float:right">Reset</button>
+            </div>
+        </div>
+    }
+</body>
+
+
+@code {
+   
+
+    Actor person = new Actor();
+    List<Actor> usersArr = new List<Actor>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetUsers();
+    }
+
+    private void GetUsers()
+    {
+        usersArr = actorService.GetUsers();
+    }
+    private void Save()
+    {
+        actorService.SaveOrUpdate(person);
+        Reset();
+        GetUsers();
+    }
+    private void Reset()
+    {
+        person = new Actor();
+    }
+    private void Edit(string userId)
+    {
+        person = actorService.GetUser(userId);
+    }
+    private void Delete(string userId)
+    {
+        actorService.Delete(userId);
+        GetUsers();
+    }
+}

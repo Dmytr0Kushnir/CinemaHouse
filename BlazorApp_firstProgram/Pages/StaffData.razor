@@ -1,0 +1,160 @@
+﻿@page "/staff"
+
+@using BlazorApp_firstProgram.Data
+@inject BlazorApp_firstProgram.IService.IServiceObj<Staff> staffService
+@inject ModelAccount.Password currentPassword
+<body>
+    <h3>Our Staff in Cinema House</h3>
+ 
+
+ @if (currentPassword.PasswordInputed!="12345")
+ {
+ <h4>Dear sir/madam, let's introduce u to our family in Cinema House</h4>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>  </th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Rating</th>
+            <th>Roll</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in usersArr)
+        {
+            <tr>
+                <th> - </th>
+                
+                <td>@ticket.FirstName</td>
+                <td>@ticket.LastName</td>
+                <td>@ticket.Rating</td>
+                <td>@ticket.Roll</td>
+                <td>@ticket.Age</td>
+               
+            </tr>
+        }
+    </tbody>
+</table>
+ }
+ else
+ {
+ <h4>Hello admin,</h4>
+        <table class="table">
+            <thead>
+                <tr>
+
+                    <th>  </th>
+                    <th>Id</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Rating</th>
+                    <th>Roll</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in usersArr)
+                {
+                    <tr>
+                        <th>  </th>
+                        <td>@ticket.Id</td>
+                        <td>@ticket.FirstName</td>
+                        <td>@ticket.LastName</td>
+                        <td>@ticket.Rating</td>
+                        <td>@ticket.Roll</td>
+                        <td>@ticket.Age</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="@(e => Edit(@ticket.Id))">Edit</button>
+                            <button class="btn btn-danger" @onclick="@(e => Delete(@ticket.Id))" style="float:right">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Firstname:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.FirstName" style="width:40%;" placeholder="Firstname" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Lastname:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.LastName" style="width:40%;" placeholder="Lastname" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Who is she/he?:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.Roll" style="width:40%;" placeholder="Roll" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Rating:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.Rating" type="number" style="width:40%;" placeholder="Rating" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4">
+                <label>Age of person:</label>
+            </div>
+            <div class="col-nd-8">
+                <input @bind="person.Age" type="number" style="width:40%;" placeholder="Age" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-nd-4"></div>
+            <div class="col-nd-8">
+                <button class="btn btn-primary" @onclick="@(e => Save())">Save</button>
+                <button class="btn btn-danger" @onclick="@(e => Reset())" style="float:right">Reset</button>
+            </div>
+        </div>
+ }
+</body>
+
+
+@code {
+    
+    Staff person = new Staff();
+    List<Staff> usersArr = new List<Staff>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetUsers();
+    }
+    private void GetUsers()
+    {
+        usersArr = staffService.GetUsers();
+    }
+    private void Save()
+    {
+        staffService.SaveOrUpdate(person);
+        Reset();
+        GetUsers();
+    }
+    private void Reset()
+    {
+        person = new Staff();
+    }
+    private void Edit(string userId)
+    {
+        person = staffService.GetUser(userId);
+    }
+    private void Delete(string userId)
+    {
+        staffService.Delete(userId);
+        GetUsers();
+    }
+}
